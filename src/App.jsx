@@ -4,25 +4,30 @@ import GameBoard from "./components/GameBoard";
 import Player from "./components/Player";
 import Log from "./components/Log";
 
-function App() {
-  const [activePlayer, setActivePlayer] = useState("X");
+//determining the current player based on an array of taken turns (latest turn = first element)
+//based on current state value & when updating state
+function deriveActivePlayer(gameTurns) {
+  let currentPlayer = "X";
+  if (gameTurns.length > 0 && gameTurns[0].player === "X") {
+    currentPlayer = "O";
+  }
 
+  return currentPlayer;
+}
+
+function App() {
   //to keep track of order of the turns made (for the log)
   const [gameTurns, setGameTurns] = useState([]);
 
+  const activePlayer = deriveActivePlayer(gameTurns);
+
   //function to be executed every time we switch turns
   function handleSelectSquare(rowIndex, colIndex) {
-    //updating the state based on its previous value - need to pass a function
-    setActivePlayer((currentPlayer) => (currentPlayer === "X" ? "O" : "X"));
-
     //to add a new entry to the turns array, make an updated const where we copy the existing turns
     //and insert the new information in front of that - the first element in the array = latest turn
     setGameTurns((prevTurns) => {
-      let currentPlayer = "X"; //we can't depend on another state to determine which player's turn it is
-      if (prevTurns.length > 0 && prevTurns[0].player === "X") {
-        //so we check the newest entry to toggle to other player
-        currentPlayer = "O";
-      }
+      const currentPlayer = deriveActivePlayer(prevTurns);
+
       const updatedTurns = [
         { square: { row: rowIndex, col: colIndex }, player: currentPlayer },
         ...prevTurns,
@@ -47,11 +52,7 @@ function App() {
             isActive={activePlayer === "O"}
           />
         </ol>
-        <GameBoard
-          onSelectSquare={handleSelectSquare}
-          activePlayerSymbol={activePlayer}
-          turns={gameTurns}
-        />
+        <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />
       </div>
       <Log turns={gameTurns} />
     </main>
