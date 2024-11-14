@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Player = ({ initialName, symbol, isActive }) => {
+const Player = ({ initialName, symbol, isActive, onChangeName }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(initialName);
 
@@ -15,6 +15,9 @@ const Player = ({ initialName, symbol, isActive }) => {
     //to make sure you are working with the latest state value, pass a function to the state updating function
     setIsEditing((editing) => !editing);
     //instead of: setIsEditing(!isEditing)
+    if (isEditing) {
+      onChangeName(symbol, name);
+    }
   }
 
   //handles logic when onChange event happens on input field - every time user enters a char
