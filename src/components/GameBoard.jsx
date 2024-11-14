@@ -6,8 +6,18 @@ const initialBoard = [
   [null, null, null],
 ];
 
-const GameBoard = ({ onSelectSquare, activePlayerSymbol }) => {
-  const [gameboard, setGameboard] = useState(initialBoard);
+const GameBoard = ({ onSelectSquare, turns }) => {
+  let gameboard = initialBoard;
+
+  //overwrite the gameboard with the data incoming from turns array, if there is any
+  for (const turn of turns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+
+    gameboard[row][col] = player;
+  }
+
+  /* const [gameboard, setGameboard] = useState(initialBoard);
 
   function handleClickSquare(rowIndex, colIndex) {
     setGameboard((prevGameboard) => {
@@ -20,8 +30,9 @@ const GameBoard = ({ onSelectSquare, activePlayerSymbol }) => {
     });
 
     //call from inside the function that gets called when the button is clicked
+    //calling a function that is defined outside of this component - the handleSelectSquare - which updates the state
     onSelectSquare();
-  }
+  }*/
 
   return (
     <ol id="game-board">
@@ -30,7 +41,7 @@ const GameBoard = ({ onSelectSquare, activePlayerSymbol }) => {
           <ol>
             {row.map((playerSymbol, colIndex) => (
               <li key={colIndex}>
-                <button onClick={() => handleClickSquare(rowIndex, colIndex)}>
+                <button onClick={() => onSelectSquare(rowIndex, colIndex)}>
                   {playerSymbol}
                 </button>
               </li>
